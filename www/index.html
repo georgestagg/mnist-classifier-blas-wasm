@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MNIST Classification BLAS Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="container">
+    <canvas id="draw" width="280" height="280"></canvas>
+    <div id="info">
+      <div><button id="clear">Clear drawing</button></div>
+      <div id="hist"></div>
+      <div class="small right"><a href="https://github.com/georgestagg/mnist-classifier-blas-wasm/">[Source]</a></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+  <script src="index.js"></script>
+  <script src="mnist.js"></script>
+</body>
+
+</html>

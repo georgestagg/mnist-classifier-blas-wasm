@@ -1,0 +1,38 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+a {
+  color: rgb(52, 152, 219);
+}
+
+canvas {
+  border: 1px solid black;
+}
+
+#container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#info {
+  margin: 5px 20px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.right {
+  text-align: right;
+}
+
+.small {
+  font-size: 0.8rem;
+}
