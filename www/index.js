@@ -26,7 +26,7 @@ function handleMouseMove(evt) {
   if (isDown) {
     drawCtx.lineTo(x, y);
     drawCtx.stroke();
-    do_classify();
+    doClassify();
   }
 }
 
@@ -38,7 +38,7 @@ function handleTouchMove(evt) {
   if (isDown) {
     drawCtx.lineTo(x, y);
     drawCtx.stroke();
-    do_classify();
+    doClassify();
   }
 }
 
@@ -122,33 +122,35 @@ function drawHist(classify) {
 
 // Download and initialise MNIST trained MLP weights
 let weights_ptr = -1;
-(async () => {
-  const response = await fetch("./mnist.data");
-  if (!response.ok) {
-    throw new Error(`Problem downloading model weights (${response.status})`);
-  }
-  const bytes = await response.arrayBuffer();
-  const floats = new Float64Array(bytes);
-  weights_ptr = Module._malloc(floats.byteLength);
-  Module.HEAPF64.set(floats, weights_ptr / 8);
+function doLoadData() {
+  (async () => {
+    const response = await fetch("./mnist.data");
+    if (!response.ok) {
+      throw new Error(`Problem downloading model weights (${response.status})`);
+    }
+    const bytes = await response.arrayBuffer();
+    const floats = new Float64Array(bytes);
+    weights_ptr = Module._malloc(floats.byteLength);
+    Module.HEAPF64.set(floats, weights_ptr / 8);
 
-  // Ready to start
-  reset();
-  canvas.addEventListener("mousedown", handleDown);
-  canvas.addEventListener('touchstart', handleDown);
-  canvas.addEventListener("mousemove", handleMouseMove);
-  canvas.addEventListener('touchmove', handleTouchMove);
-  document.addEventListener('touchend', handleUp);
-  document.addEventListener("mouseup", handleUp);
-  document.getElementById("clear").addEventListener('click', reset);
-})().catch(err => {
-  drawCtx.fillStyle = "red";
-  drawCtx.font = "14px sans-serif bold";
-  drawCtx.fillText("An error occurred:", 5, 100);
-  drawCtx.fillText(err.message, 5, 120);
-});
+    // Ready to start
+    reset();
+    canvas.addEventListener("mousedown", handleDown);
+    canvas.addEventListener('touchstart', handleDown);
+    canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleUp);
+    document.addEventListener("mouseup", handleUp);
+    document.getElementById("clear").addEventListener('click', reset);
+  })().catch(err => {
+    drawCtx.fillStyle = "red";
+    drawCtx.font = "14px sans-serif bold";
+    drawCtx.fillText("An error occurred:", 5, 100);
+    drawCtx.fillText(err.message, 5, 120);
+  });
+}
 
-function do_classify() {
+function doClassify() {
   if (weights_ptr < 0) {
     throw new Error("Can't classify image. Weights not downloaded yet.");
   }
@@ -174,6 +176,14 @@ function do_classify() {
   // Wasm memory cleanup
   Module._free(image_ptr);
   Module._free(out_ptr);
+}
+
+// Handle Wasm startup problems
+function doAbort() {
+  drawCtx.fillStyle = "red";
+  drawCtx.font = "14px sans-serif bold";
+  drawCtx.fillText("An error occurred while starting Wasm:", 5, 100);
+  drawCtx.fillText("See the JavaScript console for details.", 5, 120);
 }
 
 // Canvas inital display
